@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/audunsh/braketlab/master/graphics/braketlab_logo.png" width = 250pxi align=right>
+<img src="https://raw.githubusercontent.com/audunsh/btjenesten/master/graphics/b__logo_3.png" width = 250pxi align=right>
 
 ## A brilliant future with B-tjenesten
 
