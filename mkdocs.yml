@@ -22,3 +22,7 @@ extra_javascript:
 
 nav:
   - Home: index.md
+  - Code Reference:
+    - btjenesten: btjenesten-reference.md
+    - bbtools: bbtools-reference.md
+
