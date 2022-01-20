@@ -1,6 +1,6 @@
-<img src="graphics/logobox.png" width = 250px>
+<img src="graphics/b_logo_3.png" width = 250px>
 
-## BubbleBox - 21st century educational toys for jedi-minded scientists
+## A brilliant future with B-tjenesten 
 
 ## Installation
 
