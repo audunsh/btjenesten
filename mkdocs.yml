@@ -1,6 +1,6 @@
 # mkdocs.yml
 theme:
-  logo: https://raw.githubusercontent.com/audunsh/braketlab/master/graphics/b_logo_3.png 
+  logo: https://raw.githubusercontent.com/audunsh/btjenesten/master/graphics/b_logo_3.png 
   name: "material"
   palette:
     primary: blue grey
