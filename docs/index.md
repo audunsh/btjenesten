@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/audunsh/btjenesten/master/graphics/b__logo_3.png" width = 250pxi align=right>
+<img src="https://raw.githubusercontent.com/audunsh/btjenesten/master/graphics/b_logo_3.png" width = 250px align=right>
 
 ## A brilliant future with B-tjenesten
 
