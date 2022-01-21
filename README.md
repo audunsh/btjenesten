@@ -1,6 +1,6 @@
 <img src="graphics/b_logo_3.png" width = 250px>
 
-## A brilliant future with B-tjenesten 
+## B-tjenesten 
 
 ## Installation
 
