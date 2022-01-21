@@ -2,7 +2,9 @@
 
 ## Boost din læring med B-tjenesten 
 
-## Installation
+<a href="https://audunsh.github.io/btjenesten/">Besøk våre nettsiden for mer informasjon.</a>
+
+## Installasjon
 
 Installer B-tjenesten med <code>pip install btjenesten</code> fra terminalen.
 
