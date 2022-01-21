@@ -1,6 +1,6 @@
 <img src="graphics/b_logo_3.png" width = 250px>
 
-## B-tjenesten 
+## Boost din læring med B-tjenesten 
 
 ## Installation
 
