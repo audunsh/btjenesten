@@ -3,7 +3,7 @@ theme:
   logo: https://raw.githubusercontent.com/audunsh/btjenesten/master/graphics/b_logo_3.png 
   name: "material"
   palette:
-    primary: blue grey
+    primary: red
 
 site_name : B-tjenesten
 
@@ -21,8 +21,9 @@ extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 nav:
-  - Home: index.md
-  - Code Reference:
+  - Hjem: index.md
+  - Våre veiledere: veiledere.md
+  - Kodedokumentasjon:
     - btjenesten: btjenesten-reference.md
     - bbtools: bbtools-reference.md
 

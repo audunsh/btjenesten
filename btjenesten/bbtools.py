@@ -12,11 +12,15 @@ from sklearn.pipeline import make_pipeline
 def visualize_surfaces(sheet, regressor, Nx = 300):
     """
     Visualize response surfaces the regressor model
-    Author: Audun Skau Hansen, Department of Chemistry, UiO (2022)
-    
-    sheet      = Box-Benhken data sheet
-    regressor  = sklearn LinearRegression instance
-    Nx         = mesh resolution along each axis
+    **Author**: Audun Skau Hansen, Department of Chemistry, UiO (2022)
+
+    ## Keyword arguments:
+
+    | Argument      | Description |
+    | ----------- | ----------- |
+    | sheet      | Box-Benhken data sheet       |
+    | regressor   | sklearn LinearRegression instance       |
+    | Nx   | mesh resolution along each axis        |
     """
     bounds = np.array(to_array(sheet)[1:,1:], dtype = float)
     xa = np.linspace(bounds[0,0], bounds[0,1],Nx)
@@ -66,7 +70,7 @@ def relabel_defaults(titles, sheet):
     """
     Rename default variable ("x0", "x1", "x2") to 
     variable names from sheet[1:,0]
-    Author: Audun Skau Hansen, Department of Chemistry, UiO
+    **Author**: Audun Skau Hansen, Department of Chemistry, UiO
     """
     new_names = to_array(sheet)[1:4,0]
     new_titles = []
@@ -79,6 +83,14 @@ def minitable(titles, values, sheet):
     Generate a mini-table for displaying inter-variable 
     dependencies as indicated by the model
     Author: Audun Skau Hansen, Department of Chemistry, UiO
+
+    ## Keyword arguments:
+
+    | Argument      | Description |
+    | ----------- | ----------- |
+    | titles      | default variables      |
+    | values   | coefficients        |
+    | sheet   | the Box-Behnken sheet        |
     """
     arr = np.zeros((len(titles),2), dtype = object)
     arr[:,0] =relabel_defaults(titles, sheet)
@@ -91,9 +103,15 @@ def bbdesign(n_center = 3, randomize = True, sheet = None):
     Returns a Box-Benhken experimental design for 3 variables
     Author: Audun Skau Hansen, Department of Chemistry, UiO
     
-    n_center  = number of samples in the center
-    randomize = whether or not to randomize the ordering
-    sheet     = sheet containing the min/max values of variables
+
+    ## Keyword arguments:
+
+    | Argument      | Description |
+    | ----------- | ----------- |
+    | n_center      |  number of samples in the center     |
+    | randomize   | whether or not to randomize the ordering (bool)        |
+    | sheet   | heet containing the min/max values of variables        |
+
     """
     a = np.arange(-1,2)
     A = np.array(np.meshgrid(a,a,a)).reshape(3,-1).T
@@ -123,6 +141,8 @@ def bbsheet(sheet):
     Returns a Box-Behnken sheet for gathering experimental results
     Author: Audun Skau Hansen, Department of Chemistry, UiO
     
+    ## Keyword arguments
+
     sheet = setup from bbsetup
     """
     bd = bbdesign(sheet = sheet)
@@ -151,7 +171,7 @@ def bbsetup():
     Returns an interactive sheet (ipysheet)
     for setting up a Box-Benkhen design session
     
-    Author: Audun Skau Hansen, Department of Chemistry, UiO
+    **Author**: Audun Skau Hansen, Department of Chemistry, UiO
     """
     global sheet
     arr = np.zeros((4,3), dtype = object)
