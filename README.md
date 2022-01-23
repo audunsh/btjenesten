@@ -2,7 +2,7 @@
 
 ## Boost din læring med B-tjenesten 
 
-<a href="https://audunsh.github.io/btjenesten/">Besøk våre nettsiden for mer informasjon.</a>
+<a href="https://audunsh.github.io/btjenesten/">Besøk våre nettsider for mer informasjon.</a>
 
 ## Installasjon
 
