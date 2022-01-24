@@ -1,9 +1,11 @@
 <img src="graphics/b_logo_3.png" width = 250px>
 
-## A brilliant future with B-tjenesten 
+## Boost din læring med B-tjenesten 
 
-## Installation
+<a href="https://audunsh.github.io/btjenesten/">Besøk våre nettsider for mer informasjon.</a>
 
-Install B-tjenesten with <code>pip install btjenesten</code> from your terminal.
+## Installasjon
+
+Installer B-tjenesten med <code>pip install btjenesten</code> fra terminalen.
 
 
