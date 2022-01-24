@@ -23,6 +23,6 @@ import btjenesten
 På disse sidene finner du dokumentasjon for vår modul, samt litt informasjon om våre aktiviteter.
 
 ---
-** For mer informasjon, kom innom B-tjenesten på våre veiledningsøkter, torsdager 14.00-16.00 på Dalton (MU20) ved Kjemisk institutt, UiO.**
+** For mer informasjon, kom innom B-tjenesten på våre veiledningsøkter, torsdager 14.00-16.00 på Dalton (MU20) ved Kjemisk institutt, UiO. Du finner oss også på Facebook:**
 
 <div class="fb-page" data-href="https://www.facebook.com/btjenesten/" data-tabs="events" data-width="" data-height="" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/btjenesten/" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/btjenesten/">B-tjenesten</a></blockquote></div>  
