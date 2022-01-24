@@ -23,6 +23,7 @@ extra_javascript:
 nav:
   - Hjem: index.md
   - Våre veiledere: veiledere.md
+  - Bakgrunn : bakgrunn.md
   - Kodedokumentasjon:
     - btjenesten: btjenesten-reference.md
     - bbtools: bbtools-reference.md
