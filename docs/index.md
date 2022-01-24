@@ -3,7 +3,7 @@
 
 <img src="https://raw.githubusercontent.com/audunsh/btjenesten/master/graphics/b_logo_3.png" width = 250px align=right>
 
-## Vår utstrakte virtuelle hånd
+## En virtuell håndsrekning fra B-tjenesten
 
 Studentene i <a href="https://www.mn.uio.no/kjemi/livet-rundt-studiene/b-tjenesten/index.html">B-tjenesten</a> (beregningstjenesten) ved  <a href="https://www.mn.uio.no/kjemi/">Kjemisk institutt, UiO</a> bidrar til både godt miljø, veiledning og utvikling. Ved siden av vår ukentlige veiledningstjeneste på Dalton (MU20) er vi involvert i  programmering- og beregningsorientert innovasjon i undervisningen ved instituttet.
 
