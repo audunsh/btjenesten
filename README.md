@@ -6,6 +6,6 @@
 
 ## Installasjon
 
-Installer B-tjenesten med <code>pip install btjenesten</code> fra terminalen.
+Du kan installere B-tjenesten med <code>pip install btjenesten</code> fra terminalen.
 
 
