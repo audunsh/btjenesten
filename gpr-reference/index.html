@@ -1,0 +1,1078 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="icon" href="https://raw.githubusercontent.com/audunsh/btjenesten/master/graphics/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.3">
+    
+    
+      
+        <title>gpr - B-tjenesten</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.f7f47774.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.3f5d1f46.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#ef5552">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    
+      
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="red" data-md-color-accent="">
+  
+    
+    <script>function __prefix(e){return new URL("..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#gaussian-process-regression-tools-gpr" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="B-tjenesten" class="md-header__button md-logo" aria-label="B-tjenesten" data-md-component="logo">
+      
+  <img src="https://raw.githubusercontent.com/audunsh/btjenesten/master/graphics/b_logo_3.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            B-tjenesten
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              gpr
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="B-tjenesten" class="md-nav__button md-logo" aria-label="B-tjenesten" data-md-component="logo">
+      
+  <img src="https://raw.githubusercontent.com/audunsh/btjenesten/master/graphics/b_logo_3.png" alt="logo">
+
+    </a>
+    B-tjenesten
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Hjem
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../veiledere/" class="md-nav__link">
+        Våre veiledere
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bakgrunn/" class="md-nav__link">
+        Bakgrunn
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      <label class="md-nav__link" for="__nav_4">
+        Kodedokumentasjon
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Kodedokumentasjon" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Kodedokumentasjon
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../btjenesten-reference/" class="md-nav__link">
+        btjenesten
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bbtools-reference/" class="md-nav__link">
+        bbtools
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          gpr
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        gpr
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#gaussian-process-regression-tools-gpr" class="md-nav__link">
+    Gaussian Process Regression tools (gpr)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#btjenesten.gpr" class="md-nav__link">
+    btjenesten.gpr
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#btjenesten.gpr.Kernel" class="md-nav__link">
+    Kernel
+  </a>
+  
+    <nav class="md-nav" aria-label="Kernel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#btjenesten.gpr.Kernel.K" class="md-nav__link">
+    K()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#btjenesten.gpr.Regressor" class="md-nav__link">
+    Regressor
+  </a>
+  
+    <nav class="md-nav" aria-label="Regressor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#btjenesten.gpr.Regressor.predict" class="md-nav__link">
+    predict()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#btjenesten.gpr.Regressor.score" class="md-nav__link">
+    score()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#btjenesten.kernels" class="md-nav__link">
+    btjenesten.kernels
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#btjenesten.kernels.Constant" class="md-nav__link">
+    Constant()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#btjenesten.kernels.Funny_trigonometric" class="md-nav__link">
+    Funny_trigonometric()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#btjenesten.kernels.RBF" class="md-nav__link">
+    RBF()
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#gaussian-process-regression-tools-gpr" class="md-nav__link">
+    Gaussian Process Regression tools (gpr)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#btjenesten.gpr" class="md-nav__link">
+    btjenesten.gpr
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#btjenesten.gpr.Kernel" class="md-nav__link">
+    Kernel
+  </a>
+  
+    <nav class="md-nav" aria-label="Kernel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#btjenesten.gpr.Kernel.K" class="md-nav__link">
+    K()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#btjenesten.gpr.Regressor" class="md-nav__link">
+    Regressor
+  </a>
+  
+    <nav class="md-nav" aria-label="Regressor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#btjenesten.gpr.Regressor.predict" class="md-nav__link">
+    predict()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#btjenesten.gpr.Regressor.score" class="md-nav__link">
+    score()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#btjenesten.kernels" class="md-nav__link">
+    btjenesten.kernels
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#btjenesten.kernels.Constant" class="md-nav__link">
+    Constant()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#btjenesten.kernels.Funny_trigonometric" class="md-nav__link">
+    Funny_trigonometric()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#btjenesten.kernels.RBF" class="md-nav__link">
+    RBF()
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                  <h1>gpr</h1>
+                
+                <h2 id="gaussian-process-regression-tools-gpr">Gaussian Process Regression tools (gpr)</h2>
+<p>This module was developed by Elias Dalan in spring 2022.</p>
+
+
+  <div class="doc doc-object doc-module">
+
+<a id="btjenesten.gpr"></a>
+    <div class="doc doc-contents first">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h2 class="doc doc-heading" id="btjenesten.gpr.Kernel">
+        <code>
+Kernel        </code>
+
+
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Kernel class </p>
+      <hr />
+<p>covariance_function:
+The function that will be used to calculate the covariance between our datasets</p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 class="doc doc-heading" id="btjenesten.gpr.Kernel.K">
+<code class="highlight language-python"><span class="n">K</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Function that returns the covariance matrix given our datasets</p>
+      <hr />
+<p>X1: Dataset 1 (Often the training set)</p>
+<p>X2: Dataset 2 (Often the target set)</p>
+      <hr />
+<p>self.covariance_function(X1, X2) : covariance matrix given our datasets X1 and X2.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>btjenesten/gpr.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">K</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that returns the covariance matrix given our datasets</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    X1: Dataset 1 (Often the training set)</span>
+
+<span class="sd">    X2: Dataset 2 (Often the target set)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    ----------</span>
+<span class="sd">    self.covariance_function(X1, X2) : covariance matrix given our datasets X1 and X2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">covariance_function</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h2 class="doc doc-heading" id="btjenesten.gpr.Regressor">
+        <code>
+Regressor        </code>
+
+
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Gaussian process regressor class</p>
+      <hr />
+<p>kernel:
+Specifies the type of covarince function we want for our regressor. 
+If none is provided the default is the radial basis function</p>
+<p>training_data_X: 
+Training data inputs, also called features</p>
+<p>training_data_Y:
+Training data outputs, also called labels</p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 class="doc doc-heading" id="btjenesten.gpr.Regressor.predict">
+<code class="highlight language-python"><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data_X</span><span class="p">,</span> <span class="n">training_data_X</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">training_data_Y</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Predicts output values for some input data given a set of training data </p>
+      <hr />
+<p>input_data_X:
+Input features that the gpr will evaluate.</p>
+<p>training_data_X:
+training data inputs.</p>
+<p>training_data_Y:
+training data outputs.</p>
+      <hr />
+<p>predicted_y:
+Predicted output data given cooresponding input_data_X and a set of training data
+inputs and outputs (training_data_X, training_data_Y)</p>
+
+        <details class="quote">
+          <summary>Source code in <code>btjenesten/gpr.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data_X</span><span class="p">,</span> <span class="n">training_data_X</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">training_data_Y</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Predicts output values for some input data given a set of training data </span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    input_data_X:</span>
+<span class="sd">    Input features that the gpr will evaluate.</span>
+
+<span class="sd">    training_data_X:</span>
+<span class="sd">    training data inputs.</span>
+
+<span class="sd">    training_data_Y:</span>
+<span class="sd">    training data outputs.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    predicted_y:</span>
+<span class="sd">    Predicted output data given cooresponding input_data_X and a set of training data</span>
+<span class="sd">    inputs and outputs (training_data_X, training_data_Y)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">training_data_X</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">training_data_Y</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">K_11</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">training_data_X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_data_X</span><span class="p">)</span>
+        <span class="n">K_12</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">training_data_X</span><span class="p">,</span> <span class="n">input_data_X</span><span class="p">)</span>
+        <span class="n">K_21</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">input_data_X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_data_X</span><span class="p">)</span>
+        <span class="n">K_22</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">input_data_X</span><span class="p">,</span> <span class="n">input_data_X</span><span class="p">)</span>
+
+        <span class="n">KT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">K_11</span><span class="p">,</span> <span class="n">K_12</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="n">predicted_y</span> <span class="o">=</span> <span class="n">KT</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">training_data_Y</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">predicted_y</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">K_11</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">training_data_X</span><span class="p">,</span> <span class="n">training_data_X</span><span class="p">)</span>
+        <span class="n">K_12</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">training_data_X</span><span class="p">,</span> <span class="n">input_data_X</span><span class="p">)</span>
+        <span class="n">K_21</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">input_data_X</span><span class="p">,</span> <span class="n">training_data_X</span><span class="p">)</span>
+        <span class="n">K_22</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">input_data_X</span><span class="p">,</span> <span class="n">input_data_X</span><span class="p">)</span>
+
+        <span class="n">KT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">K_11</span><span class="p">,</span> <span class="n">K_12</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="n">predicted_y</span> <span class="o">=</span> <span class="n">KT</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">training_data_Y</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">predicted_y</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 class="doc doc-heading" id="btjenesten.gpr.Regressor.score">
+<code class="highlight language-python"><span class="n">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data_X</span><span class="p">,</span> <span class="n">input_data_Y</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Returns the average error of our predict method.</p>
+      <hr />
+<p>input_data_X:
+input data that the gpr will predict corresponding output data to.</p>
+<p>input_data_Y:
+Corresponding true ouput data for input_data_X.</p>
+      <hr />
+<p>avg_error - the average error between the predicted values and the true values</p>
+
+        <details class="quote">
+          <summary>Source code in <code>btjenesten/gpr.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data_X</span><span class="p">,</span> <span class="n">input_data_Y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the average error of our predict method.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    input_data_X:</span>
+<span class="sd">    input data that the gpr will predict corresponding output data to.</span>
+
+<span class="sd">    input_data_Y:</span>
+<span class="sd">    Corresponding true ouput data for input_data_X.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    --------</span>
+<span class="sd">    avg_error - the average error between the predicted values and the true values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">predicted_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">input_data_X</span><span class="p">)</span>
+    <span class="n">avg_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">predicted_y</span> <span class="o">-</span> <span class="n">input_data_Y</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">avg_error</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-module">
+
+<a id="btjenesten.kernels"></a>
+    <div class="doc doc-contents first">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 class="doc doc-heading" id="btjenesten.kernels.Constant">
+<code class="highlight language-python"><span class="n">Constant</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Kernel that returns a constant covariance value between <span class="arithmatex">\(x_i\)</span> and <span class="arithmatex">\(x_j\)</span>
+Useful if all values depend on eachother equally.</p>
+      <hr />
+<p>X1: Dataset 1</p>
+<p>X2: Dataset 2</p>
+<p>k: constant that determines the covariance.</p>
+      <p>A matrix with the same shape as our input data. All matrix elements have the value k.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>btjenesten/kernels.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">Constant</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Kernel that returns a constant covariance value between $x_i$ and $x_j$</span>
+<span class="sd">    Useful if all values depend on eachother equally.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    X1: Dataset 1</span>
+
+<span class="sd">    X2: Dataset 2</span>
+
+<span class="sd">    k: constant that determines the covariance.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    A matrix with the same shape as our input data. All matrix elements have the value k.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">X1</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">*</span><span class="n">k</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 class="doc doc-heading" id="btjenesten.kernels.Funny_trigonometric">
+<code class="highlight language-python"><span class="n">Funny_trigonometric</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Kernel that I made only for fun. May work for extravagant datasets</p>
+      <hr />
+<p>X1: Dataset 1</p>
+<p>X2: Dataset 2</p>
+<p>k: constant that determines the frequency of the trigonometric functions.</p>
+      <p>A covariance matrix that might be a bit crazy.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>btjenesten/kernels.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">Funny_trigonometric</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Kernel that I made only for fun. May work for extravagant datasets</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    X1: Dataset 1</span>
+
+<span class="sd">    X2: Dataset 2</span>
+
+<span class="sd">    k: constant that determines the frequency of the trigonometric functions.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    A covariance matrix that might be a bit crazy.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="o">-</span><span class="n">k</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">y</span><span class="p">[</span><span class="kc">None</span><span class="p">,:])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="o">-</span><span class="n">k</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">y</span><span class="p">[</span><span class="kc">None</span><span class="p">,:])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 class="doc doc-heading" id="btjenesten.kernels.RBF">
+<code class="highlight language-python"><span class="n">RBF</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Radial basis function of the form:
+$$
+e^{-l * d(X_i,X_j)}
+$$</p>
+      <hr />
+<p>X1: Dataset 1</p>
+<p>X2: Dataset 2</p>
+<p>l: Length scale parameter. 
+Can be adjusted to adjust the covariance between <span class="arithmatex">\(x_i\)</span> and <span class="arithmatex">\(x_j\)</span>. 
+Increasing l will decrease the covariance, and vice verca.</p>
+      <hr />
+<p>A matrix with the same shape as our input data, where the elemets are:
+<span class="arithmatex">\(e^{-l*d(x_i, x_j)}\)</span> where <span class="arithmatex">\(d(x_i, x_j)\)</span> is the difference between element <span class="arithmatex">\(x_i\)</span> in X1
+and element <span class="arithmatex">\(x_j\)</span> in X2.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>btjenesten/kernels.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">RBF</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">l</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Radial basis function of the form:</span>
+<span class="sd">    $$</span>
+<span class="sd">    e^{-l * d(X_i,X_j)}</span>
+<span class="sd">    $$</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    X1: Dataset 1</span>
+
+<span class="sd">    X2: Dataset 2</span>
+
+<span class="sd">    l: Length scale parameter. </span>
+<span class="sd">    Can be adjusted to adjust the covariance between $x_i$ and $x_j$. </span>
+<span class="sd">    Increasing l will decrease the covariance, and vice verca.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    A matrix with the same shape as our input data, where the elemets are:</span>
+<span class="sd">    $e^{-l*d(x_i, x_j)}$ where $d(x_i, x_j)$ is the difference between element $x_i$ in X1</span>
+<span class="sd">    and element $x_j$ in X2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">l</span><span class="o">*</span><span class="p">(</span><span class="n">X1</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">X2</span><span class="p">[</span><span class="kc">None</span><span class="p">,:])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../bbtools-reference/" class="md-footer__link md-footer__link--prev" aria-label="Previous: bbtools" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              bbtools
+            </div>
+          </div>
+        </a>
+      
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.709b4209.min.js", "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.29db7785.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
