@@ -2,6 +2,7 @@
 theme:
   logo: https://raw.githubusercontent.com/audunsh/btjenesten/master/graphics/b_logo_3.png 
   name: "material"
+  favicon: https://raw.githubusercontent.com/audunsh/btjenesten/master/graphics/favicon.png
   palette:
     primary: red
 
@@ -27,5 +28,4 @@ nav:
   - Kodedokumentasjon:
     - btjenesten: btjenesten-reference.md
     - bbtools: bbtools-reference.md
-    - grp: gpr-reference.md
-
+    - gpr: gpr-reference.md

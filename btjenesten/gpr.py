@@ -3,7 +3,7 @@
 #April 2022
 
 import numpy as np
-import kernels as knls
+import btjenesten.kernels as knls
 
 class Kernel():
     """
