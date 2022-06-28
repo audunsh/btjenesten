@@ -4,6 +4,7 @@
 
 import numpy as np
 import kernels as knls
+from scipy.optimize import minimize
 
 class Kernel():
     """
@@ -32,6 +33,10 @@ class Kernel():
         ----------
         self.covariance_function(X1, X2) : covariance matrix given our datasets X1 and X2.
         """
+        if np.isscalar(X1):
+            X1 = np.array([X1])
+        if np.isscalar(X2):
+            X2 = np.array([X2])
 
         return self.covariance_function(X1, X2)
 
@@ -98,11 +103,6 @@ class Regressor():
             
             predicted_y = KT.dot(self.training_data_Y)
             
-            if return_covariance:
-                predicted_covariance_matrix = K_22 - KT @ K_12
-                return predicted_y, predicted_covariance_matrix
-            else:
-                return predicted_y
         else:
             K_11 = self.kernel.K(training_data_X, training_data_X)
             K_12 = self.kernel.K(training_data_X, input_data_X)
@@ -113,15 +113,15 @@ class Regressor():
 
             predicted_y = KT.dot(training_data_Y)
 
-            if return_covariance:
-                predicted_covariance_matrix = K_22 - KT @ K_12
-                return predicted_y, predicted_covariance_matrix
-            else:
-                return predicted_y
+        if return_covariance:
+            predicted_covariance_matrix = K_22 - KT @ K_12
+            return predicted_y, predicted_covariance_matrix
+        else:
+            return predicted_y
 
     def score(self, input_data_X, input_data_Y):
         """
-        Returns the average error of our predict method.
+        Returns the average and maximum error of our predict method.
 
         Parameters:
         -----------
@@ -134,8 +134,73 @@ class Regressor():
         Returns:
         --------
         avg_error - the average error between the predicted values and the true values
+        max_error - the maximum error between the predicted values and the true values
         """
 
         predicted_y = self.predict(input_data_X)
         avg_error = np.mean(np.abs(predicted_y - input_data_Y))
+        max_error = np.max(np.abs(predicted_y - input_data_Y))
         return avg_error
+    
+    def aquisition(self, minimize_prediction=True):
+        """
+        Returns the point at which our model function is predicted to have the highest value.
+
+        Parameters:
+        -----------
+        minimize_prediction:
+        If your task is to minimize some model function, this parameter is True. If your task is to maximize the model function
+        this parameter is False.
+
+        Returns:
+        --------
+        p - The predicted point at which an evaluation would yeild the highest/lowest value
+        """
+        if minimize_prediction:
+            x0_index = np.where(self.training_data_Y == np.min(self.training_data_Y))
+
+            x0 = self.training_data_X[x0_index]
+            minimization = minimize(self.predict, x0)
+            print(minimization)
+            p = minimization.x
+
+            return p
+        else:
+            x0_index = np.where(self.training_data_Y == np.min(self.training_data_Y))
+
+            x0 = self.training_data_X[x0_index]
+            objective_function = lambda x, predict = self.predict : -1*predict(x)
+
+
+
+            minimization = minimize(objective_function, x0)
+            print(minimization)
+            p = minimization.x
+
+            return p
+        
+
+    def update(self, new_X, new_Y):
+        """
+        Updates the training data in accordance to the new one
+        """
+        X_shape = np.array(self.training_data_X.shape)
+        y_shape = np.array(self.training_data_Y.shape)
+
+        X_shape[0] += 1
+        y_shape += 1
+
+        new_training_data_X = np.zeros(X_shape)
+        new_training_data_Y = np.zeros(y_shape)
+
+        new_training_data_X[:-1] = self.training_data_X
+        new_training_data_X[-1] = new_X 
+
+        new_training_data_Y[:-1] = self.training_data_Y
+        new_training_data_Y[-1] = new_Y
+
+        indexes = np.argsort(new_training_data_X)
+
+        self.training_data_X = new_training_data_X[indexes]
+        self.training_data_Y = new_training_data_Y[indexes]
+
