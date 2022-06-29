@@ -85,7 +85,7 @@ class Regressor():
         training_data_Y:
         training data outputs.
         
-        return_variance:
+        return_covariance:
         Returns variance for each prediction if this is true
 
         Returns:
@@ -94,7 +94,7 @@ class Regressor():
         Predicted output data given cooresponding input_data_X and a set of training data
         inputs and outputs (training_data_X, training_data_Y)
         
-        predicted_variance:
+        predicted_covariance_matrix:
         Predicted variance for each point of predicted output.
         """
         
@@ -176,7 +176,7 @@ class Regressor():
         Initial guess. If not specified it will use the point at which the training data is the largest/smallest.
 
         delta:
-
+        Hyperparameter that tunes UCB around measured datapoints.
         
         Returns:
         --------
@@ -229,11 +229,15 @@ class Regressor():
 
         new_Y:
         Corresponding set of labels to new_X.
+
+        tol:
+        Tolerance which the training data set can differ from new points. If this is too low you may encounter singular 
+        covariance matrices.
         """
         for measurement in new_X:
             for i in range(len(self.training_data_X)):
                 if (np.abs(measurement - self.training_data_X[i]) < tol).all():
-                    print("This point has already been measured! The model has most likely converged")
+                    print(f"The model has most likely converged! {measurement} already exists in the training set.")
                     return
 
         old_X_shape = self.training_data_X.shape
