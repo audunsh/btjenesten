@@ -3,7 +3,7 @@
 # April 2022
 
 import numpy as np
-import kernels as knls
+from btjenesten import kernels as knls
 from scipy.optimize import minimize
 
 class Kernel():
