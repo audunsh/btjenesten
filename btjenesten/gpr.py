@@ -3,7 +3,7 @@
 # April 2022
 
 import numpy as np
-import btjenesten.kernels as knls
+import kernels as knls
 from scipy.optimize import minimize
 
 class Kernel():
@@ -63,6 +63,10 @@ class Regressor():
             self.kernel = Kernel(knls.RBF)
         else:
             self.kernel = Kernel(kernel)
+
+        msg = "Expected 2D array. If you only have one feature reshape training data using array.reshape(-1, 1)"
+        assert training_data_X.ndim != 1, msg
+        
         self.training_data_X = training_data_X
         self.training_data_Y = training_data_Y
 
@@ -93,15 +97,25 @@ class Regressor():
         predicted_variance:
         Predicted variance for each point of predicted output.
         """
+        
+        msg = "Input array likely contains single sample. Reshape your data using array.reshape(1, -1) if that is the case." 
+        assert input_data_X.ndim != 1, msg
+
         if training_data_X == None or training_data_Y == None:
             K_11 = self.kernel.K(self.training_data_X, self.training_data_X)
             K_12 = self.kernel.K(self.training_data_X, input_data_X)
             K_21 = K_12.T
             K_22 = self.kernel.K(input_data_X, input_data_X)
-
+            assert (np.linalg.det(K_11) != 0), "Singular matrix. Training data might have duplicates."
             KT = np.linalg.solve(K_11, K_12).T
             
             predicted_y = KT.dot(self.training_data_Y)
+            print(f"K11: {K_11.shape}")
+            print(f"K12: {K_12.shape}")
+            print(f"K21: {K_21.shape}")
+            print(f"K22: {K_22.shape}")
+            print(f"KT: {KT.shape}")
+            print(f"Predicted y: {predicted_y.shape}")
             
         else:
             K_11 = self.kernel.K(training_data_X, training_data_X)
@@ -109,12 +123,14 @@ class Regressor():
             K_21 = self.kernel.K(input_data_X, training_data_X)
             K_22 = self.kernel.K(input_data_X, input_data_X)
 
+            assert (np.linalg.det(K_11) != 0), "Singular matrix. Training data might have duplicates."
             KT = np.linalg.solve(K_11, K_12).T
 
             predicted_y = KT.dot(training_data_Y)
 
         if return_covariance:
             predicted_covariance_matrix = K_22 - KT @ K_12
+            #print(np.diag(K_22), np.diag(KT @ K_12), np.diag(predicted_covariance_matrix))
             return predicted_y, predicted_covariance_matrix
         else:
             return predicted_y
@@ -142,7 +158,7 @@ class Regressor():
         max_error = np.max(np.abs(predicted_y - input_data_Y))
         return avg_error
     
-    def aquisition(self, minimize_prediction=True):
+    def aquisition(self, minimize_prediction=True, x0 = None, l=1.2, delta=0.1):
         """
         Returns the point at which our model function is predicted to have the highest value.
 
@@ -152,52 +168,91 @@ class Regressor():
         If your task is to minimize some model function, this parameter is True. If your task is to maximize the model function
         this parameter is False.
 
+        l:
+        Exploration parameter. Scales how much the standard deviation should impact the function value. l = 1
+        means that the function maximized/minimized equals predicted value +/- the standard deviation.
+        
+        x0:
+        Initial guess. If not specified it will use the point at which the training data is the largest/smallest.
+
+        delta:
+
+        
         Returns:
         --------
         p - The predicted point at which an evaluation would yeild the highest/lowest value
         """
-        if minimize_prediction:
-            x0_index = np.where(self.training_data_Y == np.min(self.training_data_Y))
+        if minimize_prediction: #Minimization process
+            if x0 == None:
+                x0_index = np.where(self.training_data_Y == np.min(self.training_data_Y))
 
-            x0 = self.training_data_X[x0_index]
-            minimization = minimize(self.predict, x0)
-            print(minimization)
+                x0 = self.training_data_X[x0_index]
+                x0 = x0 + np.random.rand(len(x0)) * 0
+                print(f"x0: {x0}")
+
+            objective_function = lambda x, predict = self.predict : predict(x)
+            std_x = lambda x, predict = self.predict : np.sqrt(np.abs(np.diag(predict(x, return_covariance = True)[1])))
+            objective_noise = lambda x, std = std_x : (1 - std(x))**2 * delta + std(x)
+
+            UCB = lambda x, exploit = objective_function, explore = objective_noise: exploit(x) + l*explore(x) 
+
+            minimization = minimize(UCB, x0)
             p = minimization.x
-
             return p
-        else:
-            x0_index = np.where(self.training_data_Y == np.min(self.training_data_Y))
 
-            x0 = self.training_data_X[x0_index]
-            objective_function = lambda x, predict = self.predict : -1*predict(x)
+        else: #Maximization process
+            if x0 == None:
+                x0_index = np.where(self.training_data_Y == np.max(self.training_data_Y))
 
+                x0 = self.training_data_X[x0_index]
+                x0 = x0 + + np.random.rand(len(x0)) * 0
+                print(f"x0: {x0}")
 
+            objective_function = lambda x, predict = self.predict : predict(x)
+            std_x = lambda x, predict = self.predict : np.sqrt(np.abs(np.diag(predict(x, return_covariance = True)[1])))
+            objective_noise = lambda x, std = std_x : (1 - std(x))**2 * delta + std(x)
 
-            minimization = minimize(objective_function, x0)
-            print(minimization)
+            UCB = lambda x, exploit = objective_function, explore = objective_noise : -1*(exploit(x) + l*explore(x))
+
+            minimization = minimize(UCB, x0)
             p = minimization.x
-
             return p
-        
 
-    def update(self, new_X, new_Y):
+    def update(self, new_X, new_Y, tol=1e-6):
         """
-        Updates the training data in accordance to the new one
+        Updates the training data in accordance to some newly measured data.
+
+        Parameters:
+        -----------
+        new_X:
+        Set of new features that have been measured.
+
+        new_Y:
+        Corresponding set of labels to new_X.
         """
-        X_shape = np.array(self.training_data_X.shape)
-        y_shape = np.array(self.training_data_Y.shape)
+        for measurement in new_X:
+            for i in range(len(self.training_data_X)):
+                if (np.abs(measurement - self.training_data_X[i]) < tol).all():
+                    print("This point has already been measured! The model has most likely converged")
+                    return
 
-        X_shape[0] += 1
-        y_shape += 1
+        old_X_shape = self.training_data_X.shape
+        old_Y_shape = len(self.training_data_Y)
 
-        new_training_data_X = np.zeros(X_shape)
-        new_training_data_Y = np.zeros(y_shape)
+        new_X_shape = np.array(self.training_data_X.shape)
+        new_Y_shape = np.array(self.training_data_Y.shape)
 
-        new_training_data_X[:-1] = self.training_data_X
-        new_training_data_X[-1] = new_X 
+        new_X_shape[0] += new_X.shape[0]
+        new_Y_shape += len(new_Y)
 
-        new_training_data_Y[:-1] = self.training_data_Y
-        new_training_data_Y[-1] = new_Y
+        new_training_data_X = np.zeros(new_X_shape)
+        new_training_data_Y = np.zeros(new_Y_shape)
+
+        new_training_data_X[:-new_X.shape[0]] = self.training_data_X
+        new_training_data_X[-new_X.shape[0]:] = new_X 
+
+        new_training_data_Y[:-len(new_Y)] = self.training_data_Y
+        new_training_data_Y[-len(new_Y):] = new_Y
 
         indexes = np.argsort(new_training_data_X)
 
