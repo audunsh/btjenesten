@@ -110,12 +110,6 @@ class Regressor():
             KT = np.linalg.solve(K_11, K_12).T
             
             predicted_y = KT.dot(self.training_data_Y)
-            print(f"K11: {K_11.shape}")
-            print(f"K12: {K_12.shape}")
-            print(f"K21: {K_21.shape}")
-            print(f"K22: {K_22.shape}")
-            print(f"KT: {KT.shape}")
-            print(f"Predicted y: {predicted_y.shape}")
             
         else:
             K_11 = self.kernel.K(training_data_X, training_data_X)
