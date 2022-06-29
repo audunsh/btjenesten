@@ -182,7 +182,6 @@ class Regressor():
 
                 x0 = self.training_data_X[x0_index]
                 x0 = x0 + np.random.rand(len(x0)) * 0
-                print(f"x0: {x0}")
 
             objective_function = lambda x, predict = self.predict : predict(x)
             std_x = lambda x, predict = self.predict : np.sqrt(np.abs(np.diag(predict(x, return_covariance = True)[1])))
@@ -200,7 +199,6 @@ class Regressor():
 
                 x0 = self.training_data_X[x0_index]
                 x0 = x0 + + np.random.rand(len(x0)) * 0
-                print(f"x0: {x0}")
 
             objective_function = lambda x, predict = self.predict : predict(x)
             std_x = lambda x, predict = self.predict : np.sqrt(np.abs(np.diag(predict(x, return_covariance = True)[1])))

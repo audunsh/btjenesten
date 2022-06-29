@@ -27,8 +27,8 @@ def RBF(X1, X2, l = 1):
     $e^{-l*d(x_i, x_j)}$ where $d(x_i, x_j)$ is the difference between element $x_i$ in X1
     and element $x_j$ in X2.
     """
-
-    return np.exp(-l*(X1[:, None] - X2[None,:])**2)
+    d = np.sum((X1.reshape(X1.shape[0],-1)[:, None] - X2.reshape(X2.shape[0],-1)[None,])**2, axis = 2)
+    return np.exp(-l*d)
 
 def Constant(X1, X2, k = 0.5):
     """
