@@ -3,7 +3,8 @@
 # April 2022
 
 import numpy as np
-from btjenesten import kernels as knls
+#from btjenesten import kernels as knls
+import kernels as knls
 from scipy.optimize import minimize
 
 class Kernel():
@@ -70,7 +71,7 @@ class Regressor():
         self.training_data_X = training_data_X
         self.training_data_Y = training_data_Y
 
-    def predict(self, input_data_X, training_data_X = None, training_data_Y = None, return_covariance = False):
+    def predict(self, input_data_X, training_data_X = None, training_data_Y = None, return_variance = False):
         """
         Predicts output values for some input data given a set of training data 
 
@@ -85,7 +86,7 @@ class Regressor():
         training_data_Y:
         training data outputs.
         
-        return_covariance:
+        return_variance:
         Returns variance for each prediction if this is true
 
         Returns:
@@ -98,8 +99,8 @@ class Regressor():
         Predicted variance for each point of predicted output.
         """
         
-        msg = "Input array likely contains single sample. Reshape your data using array.reshape(1, -1) if that is the case." 
-        assert input_data_X.ndim != 1, msg
+        #msg = "Input array likely contains single sample. Reshape your data using array.reshape(1, -1) if that is the case." 
+        #assert input_data_X.ndim != 1 and len(input_data_X) != , msg
 
         if training_data_X == None or training_data_Y == None:
             K_11 = self.kernel.K(self.training_data_X, self.training_data_X)
@@ -122,10 +123,18 @@ class Regressor():
 
             predicted_y = KT.dot(training_data_Y)
 
-        if return_covariance:
-            predicted_covariance_matrix = K_22 - KT @ K_12
-            #print(np.diag(K_22), np.diag(KT @ K_12), np.diag(predicted_covariance_matrix))
-            return predicted_y, predicted_covariance_matrix
+        predicted_y = predicted_y.ravel()
+
+        if return_variance:
+            predicted_variance = np.diag(K_22 - KT @ K_12)
+            
+            y_var_negative = predicted_variance < 0
+            if np.any(y_var_negative):
+                predicted_variance.setflags(write="True")
+                print("Some variance values were negative. Setting them to zero.")
+                predicted_variance[y_var_negative] = 0
+
+            return predicted_y, predicted_variance
         else:
             return predicted_y
 
