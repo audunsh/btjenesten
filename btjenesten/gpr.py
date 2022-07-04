@@ -20,7 +20,7 @@ class Kernel():
     def __init__(self, covariance_function):
         self.covariance_function = covariance_function
     
-    def K(self, X1, X2):
+    def K(self, X1, X2, params):
         """
         Function that returns the covariance matrix given our datasets
 
@@ -39,7 +39,7 @@ class Kernel():
         if np.isscalar(X2):
             X2 = np.array([X2])
 
-        return self.covariance_function(X1, X2)
+        return self.covariance_function(X1, X2, params)
 
 
 class Regressor():
@@ -59,7 +59,7 @@ class Regressor():
     Training data outputs, also called labels
     """
 
-    def __init__(self, training_data_X, training_data_Y, kernel = None):
+    def __init__(self, training_data_X, training_data_Y, kernel = None, params = 1):
         if kernel == None:
             self.kernel = Kernel(knls.RBF)
         else:
@@ -70,6 +70,8 @@ class Regressor():
         
         self.training_data_X = training_data_X
         self.training_data_Y = training_data_Y
+
+        self.params = 1 # 
 
     def predict(self, input_data_X, training_data_X = None, training_data_Y = None, return_variance = False):
         """
@@ -100,20 +102,20 @@ class Regressor():
         """
 
         if training_data_X == None or training_data_Y == None:
-            K_11 = self.kernel.K(self.training_data_X, self.training_data_X)
-            K_12 = self.kernel.K(self.training_data_X, input_data_X)
+            K_11 = self.kernel.K(self.training_data_X, self.training_data_X, self.params)
+            K_12 = self.kernel.K(self.training_data_X, input_data_X, self.params)
             K_21 = K_12.T
-            K_22 = self.kernel.K(input_data_X, input_data_X)
+            K_22 = self.kernel.K(input_data_X, input_data_X, self.params)
             assert (np.linalg.det(K_11) != 0), "Singular matrix. Training data might have duplicates."
             KT = np.linalg.solve(K_11, K_12).T
             
             predicted_y = KT.dot(self.training_data_Y)
             
         else:
-            K_11 = self.kernel.K(training_data_X, training_data_X)
-            K_12 = self.kernel.K(training_data_X, input_data_X)
-            K_21 = self.kernel.K(input_data_X, training_data_X)
-            K_22 = self.kernel.K(input_data_X, input_data_X)
+            K_11 = self.kernel.K(training_data_X, training_data_X, self.params)
+            K_12 = self.kernel.K(training_data_X, input_data_X, self.params)
+            K_21 = self.kernel.K(input_data_X, training_data_X, self.params)
+            K_22 = self.kernel.K(input_data_X, input_data_X, self.params)
 
             assert (np.linalg.det(K_11) != 0), "Singular matrix. Training data might have duplicates."
             KT = np.linalg.solve(K_11, K_12).T

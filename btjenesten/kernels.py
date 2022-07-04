@@ -4,31 +4,35 @@
 
 import numpy as np
 
-def RBF(X1, X2, l = 1):
+def RBF(X1, X2, l = np.array([1.0])):
     """
     Radial basis function of the form:
     $$
     e^{-l * d(X_i,X_j)}
     $$
-
     Parameters:
     -----------
     X1: Dataset 1
     
     X2: Dataset 2
-
     l: Length scale parameter. 
     Can be adjusted to adjust the covariance between $x_i$ and $x_j$. 
-    Increasing l will decrease the covariance, and vice verca.
-
+    Increasing l will decrease the covariance, and vice versa.
+    
     Returns:
     -----------
     A matrix with the same shape as our input data, where the elemets are:
     $e^{-l*d(x_i, x_j)}$ where $d(x_i, x_j)$ is the difference between element $x_i$ in X1
     and element $x_j$ in X2.
     """
-    d = np.sum((X1.reshape(X1.shape[0],-1)[:, None] - X2.reshape(X2.shape[0],-1)[None,])**2, axis = 2)
-    return np.exp(-l*d)
+    
+    if type(l) is not np.ndarray:
+        # patch for scalar length parameter
+        l = np.array([l])
+    
+    ld = np.sum(l[None, :]*(X1.reshape(X1.shape[0],-1)[:, None] - X2.reshape(X2.shape[0],-1)[None,])**2, axis = 2)
+
+    return np.exp(-ld)
 
 def Constant(X1, X2, k = 0.5):
     """
