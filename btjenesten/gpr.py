@@ -95,12 +95,9 @@ class Regressor():
         Predicted output data given cooresponding input_data_X and a set of training data
         inputs and outputs (training_data_X, training_data_Y)
         
-        predicted_covariance_matrix:
+        predicted_variance:
         Predicted variance for each point of predicted output.
         """
-        
-        #msg = "Input array likely contains single sample. Reshape your data using array.reshape(1, -1) if that is the case." 
-        #assert input_data_X.ndim != 1 and len(input_data_X) != , msg
 
         if training_data_X == None or training_data_Y == None:
             K_11 = self.kernel.K(self.training_data_X, self.training_data_X)
@@ -159,7 +156,7 @@ class Regressor():
         predicted_y = self.predict(input_data_X)
         avg_error = np.mean(np.abs(predicted_y - input_data_Y))
         max_error = np.max(np.abs(predicted_y - input_data_Y))
-        return avg_error
+        return avg_error, max_error
     
     def aquisition(self, minimize_prediction=True, x0 = None, l=1.2, delta=0.1):
         """
