@@ -4,7 +4,7 @@
 
 import numpy as np
 #from btjenesten import kernels as knls
-import kernels as knls
+import btjenesten.kernels as knls
 from scipy.optimize import minimize
 
 class Kernel():
