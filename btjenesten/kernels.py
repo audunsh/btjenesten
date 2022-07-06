@@ -22,14 +22,14 @@ def RBF(X1, X2, l = np.array([1.0])):
     Returns:
     -----------
     A matrix with the same shape as our input data, where the elemets are:
-    $e^{-l*d(x_i, x_j)}$ where $d(x_i, x_j)$ is the difference between element $x_i$ in X1
+    $e^{-l \cdot d(x_i, x_j)}$ where $d(x_i, x_j)$ is the difference between element $x_i$ in X1
     and element $x_j$ in X2.
     """
     
     if type(l) is not np.ndarray:
         # patch for scalar length parameter
         l = np.array([l])
-    
+
     ld = np.sum(l[None, :]*(X1.reshape(X1.shape[0],-1)[:, None] - X2.reshape(X2.shape[0],-1)[None,])**2, axis = 2)
 
     return np.exp(-ld)

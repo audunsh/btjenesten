@@ -4,7 +4,8 @@
 
 import numpy as np
 #from btjenesten import kernels as knls
-import btjenesten.kernels as knls
+#import btjenesten.kernels as knls
+import kernels as knls
 from scipy.optimize import minimize
 
 class Kernel():
@@ -57,6 +58,9 @@ class Regressor():
 
     training_data_Y:
     Training data outputs, also called labels
+
+    params:
+    
     """
 
     def __init__(self, training_data_X, training_data_Y, kernel = None, params = 1):
@@ -130,7 +134,6 @@ class Regressor():
             y_var_negative = predicted_variance < 0
             if np.any(y_var_negative):
                 predicted_variance.setflags(write="True")
-                print("Some variance values were negative. Setting them to zero.")
                 predicted_variance[y_var_negative] = 0
 
             return predicted_y, predicted_variance
@@ -189,13 +192,16 @@ class Regressor():
                 x0_index = np.where(self.training_data_Y == np.min(self.training_data_Y))
 
                 x0 = self.training_data_X[x0_index]
-                x0 = x0 + np.random.rand(len(x0)) * 0
 
             objective_function = lambda x, predict = self.predict : predict(x)
-            std_x = lambda x, predict = self.predict : np.sqrt(np.abs(np.diag(predict(x, return_covariance = True)[1])))
+            std_x = lambda x, predict = self.predict : np.sqrt(np.abs(np.diag(predict(x, return_variance = True)[1])))
             objective_noise = lambda x, std = std_x : (1 - std(x))**2 * delta + std(x)
 
             UCB = lambda x, exploit = objective_function, explore = objective_noise: exploit(x) + l*explore(x) 
+
+            def UCB(x, f = UCB):
+                x = x.reshape(1, -1)
+                return f(x)
 
             minimization = minimize(UCB, x0)
             p = minimization.x
@@ -206,19 +212,21 @@ class Regressor():
                 x0_index = np.where(self.training_data_Y == np.max(self.training_data_Y))
 
                 x0 = self.training_data_X[x0_index]
-                x0 = x0 + + np.random.rand(len(x0)) * 0
 
             objective_function = lambda x, predict = self.predict : predict(x)
-            std_x = lambda x, predict = self.predict : np.sqrt(np.abs(np.diag(predict(x, return_covariance = True)[1])))
+            std_x = lambda x, predict = self.predict : np.sqrt(np.abs(np.diag(predict(x, return_variance = True)[1])))
             objective_noise = lambda x, std = std_x : (1 - std(x))**2 * delta + std(x)
 
             UCB = lambda x, exploit = objective_function, explore = objective_noise : -1*(exploit(x) + l*explore(x))
+            def UCB(x, f = UCB):
+                x = x.reshape(1, -1)
+                return f(x)
 
             minimization = minimize(UCB, x0)
             p = minimization.x
             return p
 
-    def update(self, new_X, new_Y, tol=1e-6):
+    def update(self, new_X, new_Y, tol=1e-5):
         """
         Updates the training data in accordance to some newly measured data.
 
@@ -234,17 +242,21 @@ class Regressor():
         Tolerance which the training data set can differ from new points. If this is too low you may encounter singular 
         covariance matrices.
         """
-        for measurement in new_X:
-            for i in range(len(self.training_data_X)):
-                if (np.abs(measurement - self.training_data_X[i]) < tol).all():
-                    print(f"The model has most likely converged! {measurement} already exists in the training set.")
-                    return
 
+        assert type(new_Y) is np.ndarray, "Data error!!!!! Needs to be array."
+        assert type(new_X) is np.ndarray, "Data error!!!!! Needs to be array."
+
+        for measurement in new_X.reshape(-1, self.training_data_X.shape[1]):
+            for i in range(len(self.training_data_X)):
+                if np.allclose(measurement, self.training_data_X[i], atol = tol):
+                    print(f"The model has most likely converged! {measurement} already exists in the training set.")
+                    return True
+        """
         old_X_shape = self.training_data_X.shape
         old_Y_shape = len(self.training_data_Y)
 
         new_X_shape = np.array(self.training_data_X.shape)
-        new_Y_shape = np.array(self.training_data_Y.shape)
+        new_Y_shape = len(new_Y)
 
         new_X_shape[0] += new_X.shape[0]
         new_Y_shape += len(new_Y)
@@ -252,14 +264,23 @@ class Regressor():
         new_training_data_X = np.zeros(new_X_shape)
         new_training_data_Y = np.zeros(new_Y_shape)
 
-        new_training_data_X[:-new_X.shape[0]] = self.training_data_X
+        new_training_data_X[:-old_X_shape.shape[0]] = self.training_data_X
         new_training_data_X[-new_X.shape[0]:] = new_X 
 
-        new_training_data_Y[:-len(new_Y)] = self.training_data_Y
-        new_training_data_Y[-len(new_Y):] = new_Y
+        new_training_data_Y[:-old_Y_shape] = self.training_data_Y
+        new_training_data_Y[-new_Y_shape:] = new_Y
+        """
+        #print("X1 shape ",self.training_data_X.shape)
+        #print("X2 shape ",.shape)
+        new_X = new_X.reshape(-1, self.training_data_X.shape[1])
 
-        indexes = np.argsort(new_training_data_X)
+        new_training_data_X = np.concatenate((self.training_data_X, new_X))
+        new_training_data_Y = np.concatenate((self.training_data_Y, new_Y))
 
-        self.training_data_X = new_training_data_X[indexes]
-        self.training_data_Y = new_training_data_Y[indexes]
+        #indexes = np.argsort(new_training_data_X)
+
+        self.training_data_X = new_training_data_X#[indexes]
+        self.training_data_Y = new_training_data_Y#[indexes]
+
+        return False
 
