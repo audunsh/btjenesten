@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
      name='btjenesten',  
-     version='0.11',
+     version='0.12',
      author="Audun Skau Hansen",
      author_email="a.s.hansen@kjemi.uio.no",
      description="Tools for a brilliant future",
