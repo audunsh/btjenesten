@@ -1,4 +1,85 @@
 import numpy as np
+from scipy.optimize import minimize
+import btjenesten as bt
+
+def parameter_optimization(x_data, y_data, training_fraction, normalize_y = True, params = None):
+    """
+    Draft for a parameter optimization scheme
+    Author: Audun Skau Hansen
+    
+    Takes as input the dataset (x_data, y_data) and the 
+    fraction (a float in the interval 0.0 - 1.0) of datapoints
+    to use as training data.
+    """
+    n = int(training_fraction*x_data.shape[0])
+    
+    # special first iteration
+    if params is None:
+        params = np.ones(x_data.shape[1])*-2.0 #*0.001
+    #training_subset = np.random.choice(x_data.shape[0], n, replace = False)
+    training_subset = np.ones(x_data.shape[0], dtype = bool)
+    training_subset[n:] = False
+    #print(training_subset)
+    y_data_n = y_data*1
+    if normalize_y:
+        y_data_n*=y_data_n.max()**-1
+    
+    def residual(params, x_data = x_data, y_data=y_data_n, training_subset = training_subset):
+        test_subset = np.ones(x_data.shape[0], dtype = bool)
+        test_subset[training_subset] = False
+        regressor = bt.gpr.Regressor(x_data[training_subset] , y_data[training_subset]) 
+        regressor.params = 10**params
+        energy = np.sum((regressor.predict(x_data[test_subset]) - y_data[test_subset])**2)
+        return energy
+    
+    
+    ret = minimize(residual, params)
+    print(ret)
+    return 10**ret["x"]
+
+
+def remove_redundancy(x_train, y_train, tol = 10e-8):
+    """
+    extract unique columns of x_train (and corresponding elements in y_train)
+
+    Author: Audun Skau Hansen
+
+    """
+
+
+    ns = x_train.shape[0] #number of measurements
+
+    # compute the "euclidean distance"
+    d = np.sum((x_train[:, None] - x_train[None, :])**2, axis = 2)
+
+
+    
+    active = np.ones(ns, dtype = bool)
+    
+    
+    unique_training_x = []
+    unique_training_y = []
+
+    for i in range(ns):
+
+        distances = d[i]
+        
+        da = distances[active]
+        ia = np.arange(ns)[active]
+        
+        elms = ia[da<tol]
+        active[elms] = False
+        
+        if len(elms)>0:
+            unique_training_x.append(x_train[elms[0]])
+            unique_training_y.append(np.mean(y_train[elms], axis = 0))
+
+
+    return np.array(unique_training_x), np.array(unique_training_y)
+    
+    
+
+
 
 # analysis tools for regressor data
 
