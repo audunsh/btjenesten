@@ -115,9 +115,13 @@ def data_projection(regressor, axes = [0], resolution = 20, center = None):
     
 
     # extract fitting regions (only internal datapoints will be predicted)
-    mean  = np.mean(regressor.training_data_X, axis =0 )
-    bound = np.max(regressor.training_data_X, axis = 0)-np.min(regressor.training_data_X, axis = 0)
+    mean  = np.mean(regressor.recover(regressor.training_data_X), axis =0 )
+    if center is not None:
+        mean = np.array(center)
 
+    #print(regressor.recover(regressor.training_data_X))
+    bound = np.max(regressor.recover(regressor.training_data_X), axis = 0)-np.min(regressor.recover(regressor.training_data_X), axis = 0)
+    #print(mean, bound)
     lower_bound = mean - bound
     upper_bound = mean + bound
 
@@ -125,18 +129,23 @@ def data_projection(regressor, axes = [0], resolution = 20, center = None):
     # create a grid wherein the datapoints are interpolated
     grid = []
     for i in range(len(lower_bound)):
-        grid.append(np.linspace(lower_bound[i], upper_bound[i], resolution))
+        grid.append(np.linspace(-bound[i], bound[i], resolution))
 
-    if center is None:
-        center = list(mean)
+    #if center is None:
+    #    center = np.zeros(len(mean), dtype = float)
 
-    mgrid = [0 for i in range(len(center))]
+
+    mgrid = list(mean) #[0 for i in range(len(center))]
     for i in range(len(axes)):
-        mgrid[i] = grid[i]
+        mgrid[axes[i]] = grid[axes[i]]  + mean[axes[i]]
+        
+
 
     prediction_grid = np.array(np.meshgrid(*mgrid)).reshape(len(mean), -1)
 
     # return prediction to user
-    return np.array(grid)[axes], regressor.predict(prediction_grid.T).reshape([resolution for i in range(len(axes))])
+    x = [] # list to contain the relevant grid-points    
+    for i in range(len(axes)):
+        x.append(mgrid[axes[i]])
     
-    
+    return x, regressor.predict(prediction_grid.T).reshape([resolution for i in range(len(axes))])

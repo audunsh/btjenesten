@@ -63,17 +63,45 @@ class Regressor():
     
     """
 
-    def __init__(self, training_data_X, training_data_Y, kernel = None, params = 1):
+    def __init__(self, training_data_X, training_data_Y, kernel = None, params = 1, normalize = False, normalize_log = False):
         if kernel == None:
             self.kernel = Kernel(knls.RBF)
         else:
             self.kernel = Kernel(kernel)
+            
+            
 
         msg = "Expected 2D array. If you only have one feature reshape training data using array.reshape(-1, 1)"
         assert training_data_X.ndim != 1, msg
         
-        self.training_data_X = training_data_X
-        self.training_data_Y = training_data_Y
+        if normalize:
+            """
+            Normalize X and Y data
+            
+            """
+            self.normalize, self.recover = normalize_training_data_x(training_data_X)
+            self.training_data_X = self.normalize(training_data_X)
+            
+            self.normalization_factor_y = np.abs(training_data_Y).max()
+            self.training_data_Y = training_data_Y/self.normalization_factor_y
+            
+            
+        else:
+            self.normalize, self.recover = no_normalization(training_data_X)
+            self.normalization_factor_y = 1.0
+            self.training_data_X = training_data_X
+            self.training_data_Y = training_data_Y
+
+        if normalize_log:
+            """
+            Normalize X and Y data
+            
+            """
+            self.normalize, self.recover = normalize_training_data_x_log(training_data_X)
+            self.training_data_X = self.normalize(training_data_X)
+            
+            self.normalization_factor_y = np.abs(training_data_Y).max()
+            self.training_data_Y = training_data_Y/self.normalization_factor_y
 
         self.params = 1 # 
 
@@ -107,26 +135,26 @@ class Regressor():
 
         if training_data_X == None or training_data_Y == None:
             K_11 = self.kernel.K(self.training_data_X, self.training_data_X, self.params)
-            K_12 = self.kernel.K(self.training_data_X, input_data_X, self.params)
+            K_12 = self.kernel.K(self.training_data_X, self.normalize(input_data_X), self.params)
             K_21 = K_12.T
-            K_22 = self.kernel.K(input_data_X, input_data_X, self.params)
+            K_22 = self.kernel.K(self.normalize(input_data_X), self.normalize(input_data_X), self.params)
             assert (np.linalg.det(K_11) != 0), "Singular matrix. Training data might have duplicates."
             KT = np.linalg.solve(K_11, K_12).T
             
             predicted_y = KT.dot(self.training_data_Y)
             
         else:
-            K_11 = self.kernel.K(training_data_X, training_data_X, self.params)
-            K_12 = self.kernel.K(training_data_X, input_data_X, self.params)
-            K_21 = self.kernel.K(input_data_X, training_data_X, self.params)
-            K_22 = self.kernel.K(input_data_X, input_data_X, self.params)
+            K_11 = self.kernel.K(self.normalize(training_data_X), self.normalize(training_data_X), self.params)
+            K_12 = self.kernel.K(self.normalize(training_data_X), self.normalize(input_data_X), self.params)
+            K_21 = self.kernel.K(self.normalize(input_data_X), self.normalize(training_data_X), self.params)
+            K_22 = self.kernel.K(self.normalize(input_data_X), self.normalize(input_data_X), self.params)
 
             assert (np.linalg.det(K_11) != 0), "Singular matrix. Training data might have duplicates."
             KT = np.linalg.solve(K_11, K_12).T
 
             predicted_y = KT.dot(training_data_Y)
 
-        predicted_y = predicted_y.ravel()
+        predicted_y = predicted_y.ravel()*self.normalization_factor_y
 
         if return_variance:
             predicted_variance = np.diag(K_22 - KT @ K_12)
@@ -163,7 +191,7 @@ class Regressor():
         max_error = np.max(np.abs(predicted_y - input_data_Y))
         return avg_error, max_error
     
-    def aquisition(self, minimize_prediction=True, x0 = None, l=1.2, delta=0.1):
+    def aquisition(self, minimize_prediction=True, x0 = None, l=1.2, delta=0.1, method = "BFGS"):
         """
         Returns the point at which our model function is predicted to have the highest value.
 
@@ -185,7 +213,7 @@ class Regressor():
         
         Returns:
         --------
-        p - The predicted point at which an evaluation would yeild the highest/lowest value
+        p - The predicted point at which an evaluation would yield the highest/lowest value
         """
         if minimize_prediction: #Minimization process
             if x0 == None:
@@ -203,7 +231,7 @@ class Regressor():
                 x = x.reshape(1, -1)
                 return f(x)
 
-            minimization = minimize(UCB, x0)
+            minimization = minimize(UCB, x0, method = method)
             p = minimization.x
             return p
 
@@ -222,7 +250,7 @@ class Regressor():
                 x = x.reshape(1, -1)
                 return f(x)
 
-            minimization = minimize(UCB, x0)
+            minimization = minimize(UCB, x0, method = method)
             p = minimization.x
             return p
 
@@ -274,8 +302,8 @@ class Regressor():
         #print("X2 shape ",.shape)
         new_X = new_X.reshape(-1, self.training_data_X.shape[1])
 
-        new_training_data_X = np.concatenate((self.training_data_X, new_X))
-        new_training_data_Y = np.concatenate((self.training_data_Y, new_Y))
+        new_training_data_X = np.concatenate((self.training_data_X, self.normalize(new_X)))
+        new_training_data_Y = np.concatenate((self.training_data_Y, new_Y/self.normalization_factor_y))
 
         #indexes = np.argsort(new_training_data_X)
 
@@ -284,3 +312,63 @@ class Regressor():
 
         return False
 
+def normalize_training_data_x(training_data):
+    """
+    generate functions to normalize and recover unnormalized
+    training data
+    
+    Author: Audun
+    
+    (more detailed explanation is required)
+    """
+    mean  = np.mean(training_data, axis =0 )
+    bound = np.max(training_data, axis = 0)-np.min(training_data, axis = 0)
+    
+    def normalize(training_data, mean= mean, bound = bound):
+        training_data_normalized = training_data - mean[None,:]
+        training_data_normalized *= (.5*bound[None, :])**-1
+        return training_data_normalized
+    
+    def recover(training_data_normalized, mean= mean, bound = bound):
+        return training_data_normalized*(.5*bound[None,:]) + mean[None, :]
+        
+    return normalize, recover
+
+def normalize_training_data_x_log(training_data):
+    """
+    generate functions to normalize and recover unnormalized
+    training data
+    
+    Author: Audun
+    
+    (more detailed explanation is required)
+    """
+    #mean  = np.mean(training_data, axis =0 )
+    min_ = np.min(training_data, axis =0 )  - 1e-3
+    bound = np.max(training_data, axis = 0)-np.min(training_data, axis = 0)
+
+
+    
+    def normalize(training_data, min_= min_, bound = bound):
+        training_data_normalized = training_data 
+
+        return np.log(training_data_normalized)
+    
+    def recover(training_data_normalized, min_= min_, bound = bound):
+        return np.exp(training_data_normalized)
+        
+    return normalize, recover
+
+def no_normalization(training_data):
+    """
+    generate functions which essentially does nothing
+    
+    Author: No-one
+    """
+    def normalize(training_data):
+        return training_data
+    
+    def recover(training_data):
+        return training_data
+        
+    return normalize, recover
