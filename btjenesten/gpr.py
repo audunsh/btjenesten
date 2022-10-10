@@ -193,7 +193,7 @@ class Regressor():
         return avg_error, max_error
     
     def aquisition(self, minimize_prediction=True, x0 = None, l=1.2, delta=0.1, method = "COBYLA"):
-        """
+       """
         Returns the point at which our model function is predicted to have the highest value.
 
         Parameters:
@@ -202,8 +202,8 @@ class Regressor():
         If your task is to minimize some model function, this parameter is True. If your task is to maximize the model function
         this parameter is False.
 
-        l:
-        Exploration parameter. Scales how much the standard deviation should impact the function value. l = 1
+        alpha:
+        Exploration parameter. Scales how much the standard deviation should impact the function value. alpha = 1.2
         means that the function maximized/minimized equals predicted value +/- the standard deviation.
         
         x0:
@@ -226,7 +226,7 @@ class Regressor():
             std_x = lambda x, predict = self.predict : np.sqrt(np.abs(np.diag(predict(x, return_variance = True)[1])))
             objective_noise = lambda x, std = std_x : (1 - std(x))**2 * delta + std(x)
 
-            UCB = lambda x, exploit = objective_function, explore = objective_noise: exploit(x) + l*explore(x) 
+            UCB = lambda x, exploit = objective_function, explore = objective_noise: exploit(x) + alpha*explore(x) 
 
             def UCB(x, f = UCB):
                 x = x.reshape(1, -1)
@@ -246,7 +246,7 @@ class Regressor():
             std_x = lambda x, predict = self.predict : np.sqrt(np.abs(np.diag(predict(x, return_variance = True)[1])))
             objective_noise = lambda x, std = std_x : (1 - std(x))**2 * delta + std(x)
 
-            UCB = lambda x, exploit = objective_function, explore = objective_noise : -1*(exploit(x) + l*explore(x))
+            UCB = lambda x, exploit = objective_function, explore = objective_noise : -1*(exploit(x) + alpha*explore(x))
             def UCB(x, f = UCB):
                 x = x.reshape(1, -1)
                 return f(x)
