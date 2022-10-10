@@ -140,9 +140,9 @@ def visualize_surfaces(bbwidget, Nx = 30):
     print("Standard dev. error:", std_error)
     print("Fitting score.     :", score)
     print("Maximum coords     :", max_point)
-    print("Maximum value.     :", max_fun[0])
+    print("Maximum value.     :", max_fun)
     print("Minimum coords     :", min_point)
-    print("Minimum value.     :", min_fun[0])
+    print("Minimum value.     :", min_fun)
         
     
     

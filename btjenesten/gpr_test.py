@@ -1,18 +1,19 @@
 import numpy as np
-import gpr as gpr 
-import kernels as knls 
+from btjenesten.gpr import Regressor
 import matplotlib.pyplot as plt
 
-constant = knls.Constant
-crazy = knls.Funny_trigonometric
-rbf = knls.RBF
+from kernels import Constant, Funny_trigonometric, RBF
+
+constant =Constant
+crazy = Funny_trigonometric
+rbf = RBF
 
 f = lambda x : np.exp(x) + x
 
 x_train = np.linspace(0, 10, 11)
 y_train = f(x_train)
 
-regressor = gpr.Regressor(x_train, y_train, rbf)
+regressor = Regressor(x_train, y_train, rbf)
 
 x_val = np.linspace(0, 10, 110)
 y_val = regressor.predict(x_val)

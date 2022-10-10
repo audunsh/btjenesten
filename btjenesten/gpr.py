@@ -4,7 +4,8 @@
 
 import numpy as np
 #from btjenesten import kernels as knls
-import btjenesten.kernels as knls
+#import btjenesten.kernels as knls
+from btjenesten.kernels import RBF
 #import kernels as knls
 from scipy.optimize import minimize
 
@@ -65,7 +66,7 @@ class Regressor():
 
     def __init__(self, training_data_X, training_data_Y, kernel = None, params = 1, normalize = False, normalize_log = False):
         if kernel == None:
-            self.kernel = Kernel(knls.RBF)
+            self.kernel = Kernel(RBF)
         else:
             self.kernel = Kernel(kernel)
             
@@ -191,7 +192,7 @@ class Regressor():
         max_error = np.max(np.abs(predicted_y - input_data_Y))
         return avg_error, max_error
     
-    def aquisition(self, minimize_prediction=True, x0 = None, l=1.2, delta=0.1, method = "BFGS"):
+    def aquisition(self, minimize_prediction=True, x0 = None, l=1.2, delta=0.1, method = "COBYLA"):
         """
         Returns the point at which our model function is predicted to have the highest value.
 
