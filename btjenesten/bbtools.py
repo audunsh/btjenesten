@@ -14,6 +14,7 @@ class tablewidget():
     """
     Tabular in/out for Box-Behnken widgets
     Author: Audun Skau Hansen, 2022
+
     """
     def __init__(self, column_headers, row_headers):
         self.tab = np.zeros((len(row_headers)+1,len(column_headers)+1), dtype = object)
