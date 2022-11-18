@@ -8,4 +8,6 @@
 
 Du kan installere B-tjenesten med <code>pip install btjenesten</code> fra terminalen.
 
+## Develompent Mode
 
+For innstallere B-tjenesten med dev-modusen, bruk <code>pip install btjenesten -e</code>. Dette tillater deg å kunne gjøre endringer i koden og kunne se resultatet uten å måtte innstallere biblioteket på nytt for hver gang.
